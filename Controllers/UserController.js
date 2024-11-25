@@ -76,7 +76,6 @@ export async function loginUser(req, res) {
       message: `Invalid Login Credentials`,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       status: 500,
       message: "Error Login User",

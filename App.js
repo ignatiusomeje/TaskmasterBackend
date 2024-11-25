@@ -7,14 +7,10 @@ import mongoose from "mongoose";
 
 const App = express(); 
 
-console.log("i entered here ooooo")
-
 App.use(express.json())
 App.use(cors())
 App.use("/api/v1/users", userRouter);
 App.use("/api/v1/tasks", taskRouter)
-
-console.log("i entered here ooooo")
 
 
 mongoose

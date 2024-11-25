@@ -30,12 +30,24 @@ export async function getAllTasks(req, res) {
   try {
     const title = req.query.title;
     const priority = req.query.priority;
+    let tasks;
+    if (title) {
+      tasks = await Tasks.find({
+        title: new RegExp(title, "i"),
+        creator: req.user,
+      }).sort({ createdAt: -1 });
+    } else if (priority) {
+      tasks = await Tasks.find({
+        priority: new RegExp(priority, "i"),
+        creator: req.user,
+      }).sort({ createdAt: -1 });
+    } else {
+      tasks = await Tasks.find({
+        creator: req.user,
+      }).sort({ createdAt: -1 });
+    }
 
-    const tasks = await Tasks.find({
-      $or: [{ title }, { priority }],
-    }).sort({ createdAt: -1 });
-
-    if (!tasks) {
+    if (tasks.length === 0) {
       return res.status(404).json({
         status: 404,
         message: `No Task found`,
@@ -56,14 +68,17 @@ export async function getAllTasks(req, res) {
 
 export async function updateATaskById(req, res) {
   try {
-    if (!isValidObjectId(req.params.id)){
+    if (!isValidObjectId(req.params.id)) {
       return res.status(400).json({
         status: 400,
         message: `Invalid Task ID`,
-      })
+      });
     }
 
-    const taskToUpdate = await Tasks.findById(req.params.id);
+    const taskToUpdate = await Tasks.findOne({
+      _id: req.params.id,
+      creator: req.user,
+    });
 
     if (!taskToUpdate) {
       return res.status(404).json({
@@ -72,11 +87,15 @@ export async function updateATaskById(req, res) {
       });
     }
 
-    await Tasks.findOneAndUpdate({_id: req.params.id},{...req.body},{new: true})
+    await Tasks.findOneAndUpdate(
+      { _id: req.params.id, creator: req.user },
+      { ...req.body },
+      { new: true }
+    );
 
     return res.status(200).json({
       status: 200,
-      message: drug,
+      message: `Tasks updated Successfully`,
     });
   } catch (error) {
     res.status(500).json({
@@ -88,14 +107,17 @@ export async function updateATaskById(req, res) {
 
 export async function deleteATaskById(req, res) {
   try {
-    if (!isValidObjectId(req.params.id)){
+    if (!isValidObjectId(req.params.id)) {
       return res.status(400).json({
         status: 400,
         message: `Invalid Task ID`,
-      })
+      });
     }
 
-    const taskToDelete = await Tasks.findById(req.params.id);
+    const taskToDelete = await Tasks.findOne({
+      _id: req.params.id,
+      creator: req.user,
+    });
 
     if (!taskToDelete) {
       return res.status(404).json({
@@ -103,7 +125,7 @@ export async function deleteATaskById(req, res) {
         message: `Drug not found`,
       });
     }
-    await Tasks.findByIdAndDelete(req.params.id)
+    await Tasks.findByIdAndDelete(req.params.id);
 
     return res.status(204).json({
       status: 204,

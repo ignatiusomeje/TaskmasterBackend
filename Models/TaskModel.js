@@ -33,7 +33,7 @@ const TaskSchema = mongoose.Schema(
       required: [true, "Creator is required"],
     },
   },
-  { usetimestamp: true }
+  { timestamps: true }
 );
 
 export const Tasks = mongoose.model("Tasks", TaskSchema);

@@ -12,7 +12,7 @@ const taskRouter = express.Router();
 
 taskRouter.post("/", TaskValidation, authenticate, createTask);
 taskRouter.get("/", authenticate, getAllTasks);
-taskRouter.put("/:id", updateATaskById);
-taskRouter.delete("/:id", deleteATaskById);
+taskRouter.put("/:id",authenticate, updateATaskById);
+taskRouter.delete("/:id",authenticate, deleteATaskById);
 
 export default taskRouter;
