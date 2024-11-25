@@ -3,7 +3,7 @@ import {
   CreateUserValidation,
   LoginValidation,
 } from "./../Utils/UserValidation.js";
-import { createUser, loginUser } from "../controllers/UserController.js";
+import { createUser, loginUser } from "../Controllers/UserController.js";
 
 const userRouter = express.Router();
 
